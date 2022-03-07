@@ -1,6 +1,9 @@
 using BepInEx;
 using BepInEx.Configuration;
+using R2API.Utils;
+using RoR2;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +11,7 @@ using UnityEngine.SceneManagement;
 namespace WaterTweaker
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
+    [R2APISubmoduleDependency(nameof(CommandHelper))]
 	
 	public class ExamplePlugin : BaseUnityPlugin
 	{
@@ -36,7 +40,9 @@ namespace WaterTweaker
 
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
-			Log.LogInfo(nameof(Awake) + " done.");
+            R2API.Utils.CommandHelper.AddToConsoleWhenReady();
+
+            Log.LogInfo(nameof(Awake) + " done.");
         }
 
         public void Update()
@@ -92,5 +98,64 @@ namespace WaterTweaker
                 if(!TryApplyTweaksWetland())
                     tryApplyTweaksAgain = true;
         }
-	}
+
+        [ConCommand(commandName = "WaterTweaker_opacity", helpText = "Set Opacity of the water in Wetland Aspect. Value must be between 0.0 and 1.0. args[0]=(float)value")]
+        private static void CommandOpacity(ConCommandArgs args)
+        {
+            string arg0 = args.TryGetArgString(0);
+            if (!string.IsNullOrWhiteSpace(arg0))
+            {
+                string sanitizedArg0 = arg0.Trim().Replace(',', '.');
+                if (float.TryParse(sanitizedArg0, NumberStyles.Float, CultureInfo.InvariantCulture, out float newValue))
+                {
+                    if (newValue >= 0.0f && newValue <= 1.0f)
+                    {
+                        ConfigWetlandWaterOpacity.Value = newValue;
+                        Debug.Log($"Water Opacity set to {newValue.ToString(CultureInfo.InvariantCulture)}");
+                    }
+                    else
+                        Debug.LogError("Opacity value out of bounds ! Must be between 0.0 and 1.0");
+                }
+                else
+                    Debug.LogError("Couldn't parse new value as float.");
+            }
+            else
+                Debug.Log($"Current Water Opacity Value: `{ConfigWetlandWaterOpacity.Value.ToString(CultureInfo.InvariantCulture)}`.");
+        }
+
+        [ConCommand(commandName = "WaterTweaker_pp", helpText = "Enables Post processing effects when the camera is under water in Wetland Aspect. Value must be `true`, `false`, `0` or `1`. args[0]=(bool)value")]
+        private static void CommandPP(ConCommandArgs args)
+        {
+            string arg0 = args.TryGetArgString(0);
+            if (!string.IsNullOrWhiteSpace(arg0))
+            {
+                string sanitizedArg0 = arg0.Trim().ToLower();
+                if (TryParseBool(sanitizedArg0, out bool newVal))
+                {
+                    ConfigWetlandWaterPP.Value = newVal;
+                    Debug.Log("Water Post Processing effects now " + (newVal ? "enabled." : "disabled."));
+                }
+                else
+                    Debug.LogError("Couldn't parse new value as bool. Value must be `true`, `false`, `0` or `1`");
+            }
+            else
+                Debug.Log($"Post processing effects enabled : `{ConfigWetlandWaterPP.Value}`.");
+        }
+
+        internal static bool TryParseBool(string input, out bool result)
+        {
+            if (bool.TryParse(input, out result))
+            {
+                return true;
+            }
+
+            if (int.TryParse(input, out int val))
+            {
+                result = val > 0 ? true : false;
+                return true;
+            }
+
+            return false;
+        }
+    }
 }
