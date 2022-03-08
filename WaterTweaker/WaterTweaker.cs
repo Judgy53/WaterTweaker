@@ -18,7 +18,7 @@ namespace WaterTweaker
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Judgy";
         public const string PluginName = "WaterTweaker";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.1";
 
         private const string MapWetlandName = "foggyswamp";
 
@@ -99,7 +99,7 @@ namespace WaterTweaker
                     tryApplyTweaksAgain = true;
         }
 
-        [ConCommand(commandName = "WaterTweaker_opacity", helpText = "Set Opacity of the water in Wetland Aspect. Value must be between 0.0 and 1.0. args[0]=(float)value")]
+        [ConCommand(commandName = "watertweaker_opacity", helpText = "Set Opacity of the water in Wetland Aspect. Value must be between 0.0 and 1.0. args[0]=(float)value")]
         private static void CommandOpacity(ConCommandArgs args)
         {
             string arg0 = args.TryGetArgString(0);
@@ -123,7 +123,7 @@ namespace WaterTweaker
                 Debug.Log($"Current Water Opacity Value: `{ConfigWetlandWaterOpacity.Value.ToString(CultureInfo.InvariantCulture)}`.");
         }
 
-        [ConCommand(commandName = "WaterTweaker_pp", helpText = "Enables Post processing effects when the camera is under water in Wetland Aspect. Value must be `true`, `false`, `0` or `1`. args[0]=(bool)value")]
+        [ConCommand(commandName = "watertweaker_pp", helpText = "Enables Post processing effects when the camera is under water in Wetland Aspect. Value must be `true`, `false`, `0` or `1`. args[0]=(bool)value")]
         private static void CommandPP(ConCommandArgs args)
         {
             string arg0 = args.TryGetArgString(0);
