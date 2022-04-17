@@ -7,18 +7,22 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using RiskOfOptions;
+using RiskOfOptions.Options;
+using RiskOfOptions.OptionConfigs;
 
 namespace WaterTweaker
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [R2APISubmoduleDependency(nameof(CommandHelper))]
-	
-	public class ExamplePlugin : BaseUnityPlugin
+    [BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
+
+    public class ExamplePlugin : BaseUnityPlugin
 	{
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Judgy";
         public const string PluginName = "WaterTweaker";
-        public const string PluginVersion = "1.1.1";
+        public const string PluginVersion = "1.2.0";
 
         private const string MapWetlandName = "foggyswamp";
 
@@ -32,11 +36,15 @@ namespace WaterTweaker
         {
             Log.Init(Logger);
 
-			ConfigWetlandWaterOpacity = Config.Bind<float>("WaterTweaker", "WetlandWaterOpacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
+			ConfigWetlandWaterOpacity = Config.Bind<float>("WaterTweaker", "Wetland Water Opacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
             ConfigWetlandWaterOpacity.SettingChanged += OnWaterSettingsChanged;
+            ModSettingsManager.AddOption(new StepSliderOption(ConfigWetlandWaterOpacity, new StepSliderConfig() { min = 0.0f, max = 1.0f, increment = 0.1f }));
 
-            ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "WetlandPostProcessing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
+            ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "Wetland Post Processing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
             ConfigWetlandWaterPP.SettingChanged += OnWaterSettingsChanged;
+            ModSettingsManager.AddOption(new CheckBoxOption(ConfigWetlandWaterPP));
+
+            ModSettingsManager.SetModDescription("Allows you to tweak the graphics settings of Wetland Aspect's water.");
 
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
