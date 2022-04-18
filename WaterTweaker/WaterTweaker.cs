@@ -7,9 +7,6 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using RiskOfOptions;
-using RiskOfOptions.Options;
-using RiskOfOptions.OptionConfigs;
 
 namespace WaterTweaker
 {
@@ -32,19 +29,23 @@ namespace WaterTweaker
         private bool tryApplyTweaksAgain = false;
         private int applyAttempts = 0;
 
-        public void Awake()
+    public void Awake()
         {
             Log.Init(Logger);
 
-			ConfigWetlandWaterOpacity = Config.Bind<float>("WaterTweaker", "Wetland Water Opacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
+			ConfigWetlandWaterOpacity = Config.Bind<float>("WaterTweaker", "WetlandWaterOpacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
             ConfigWetlandWaterOpacity.SettingChanged += OnWaterSettingsChanged;
-            ModSettingsManager.AddOption(new StepSliderOption(ConfigWetlandWaterOpacity, new StepSliderConfig() { min = 0.0f, max = 1.0f, increment = 0.1f }));
 
-            ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "Wetland Post Processing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
+            ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "WetlandPostProcessing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
             ConfigWetlandWaterPP.SettingChanged += OnWaterSettingsChanged;
-            ModSettingsManager.AddOption(new CheckBoxOption(ConfigWetlandWaterPP));
 
-            ModSettingsManager.SetModDescription("Allows you to tweak the graphics settings of Wetland Aspect's water.");
+            if (RiskOfOptionsCompat.enabled)
+            {
+                RiskOfOptionsCompat.AddOptionStepSlider(ConfigWetlandWaterOpacity, 0.0f, 1.0f, 0.1f);
+                RiskOfOptionsCompat.AddOptionCheckbox(ConfigWetlandWaterPP);
+
+                RiskOfOptionsCompat.SetModDescription("Allows you to tweak the graphics settings of Wetland Aspect's water.");
+            }
 
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
@@ -53,7 +54,7 @@ namespace WaterTweaker
             Log.LogInfo(nameof(Awake) + " done.");
         }
 
-        public void Update()
+    public void Update()
         {
             if(tryApplyTweaksAgain)
             {

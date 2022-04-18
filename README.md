@@ -9,8 +9,8 @@ Various graphics tweaks on Wetland Aspect water. Using console commands is recom
 
 # Configuration
 
-- `Wetland Water Opacity` : Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0). (Default: `1.0`)
-- `Wetland Post Processing` : Enables Post Processing effects when the camera goes underwater in Wetland Aspect. (Default: `true`)
+- `WetlandWaterOpacity` : Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0). (Default: `1.0`)
+- `WetlandPostProcessing` : Enables Post Processing effects when the camera goes underwater in Wetland Aspect. (Default: `true`)
 
 # Changelog
 
