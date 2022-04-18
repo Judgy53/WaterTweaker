@@ -18,14 +18,14 @@ public static class RiskOfOptionsCompat
                 return (bool)_enabled;
             }
         }
-        public static void AddOptionStepSlider(ConfigEntry<float> configEntry, float min, float max, float increment)
+        public static void AddOptionStepSlider(ConfigEntry<float> configEntry, float min, float max, float increment, string name)
         {
-            ModSettingsManager.AddOption(new StepSliderOption(configEntry, new StepSliderConfig() { min = min, max = max, increment = increment }));
+            ModSettingsManager.AddOption(new StepSliderOption(configEntry, new StepSliderConfig() { min = min, max = max, increment = increment, name = name }));
         }
 
-        public static void AddOptionCheckbox(ConfigEntry<bool> configEntry)
+        public static void AddOptionCheckbox(ConfigEntry<bool> configEntry, string name)
         {
-            ModSettingsManager.AddOption(new CheckBoxOption(configEntry, new CheckBoxConfig()));
+            ModSettingsManager.AddOption(new CheckBoxOption(configEntry, new CheckBoxConfig() { name = name }));
         }
 
         public static void SetModDescription(string desc)

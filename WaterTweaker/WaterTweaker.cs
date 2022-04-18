@@ -41,8 +41,8 @@ namespace WaterTweaker
 
             if (RiskOfOptionsCompat.enabled)
             {
-                RiskOfOptionsCompat.AddOptionStepSlider(ConfigWetlandWaterOpacity, 0.0f, 1.0f, 0.1f);
-                RiskOfOptionsCompat.AddOptionCheckbox(ConfigWetlandWaterPP);
+                RiskOfOptionsCompat.AddOptionStepSlider(ConfigWetlandWaterOpacity, 0.0f, 1.0f, 0.1f, "Wetland Water Opacity");
+                RiskOfOptionsCompat.AddOptionCheckbox(ConfigWetlandWaterPP, "Wetland Post Processing");
 
                 RiskOfOptionsCompat.SetModDescription("Allows you to tweak the graphics settings of Wetland Aspect's water.");
             }
