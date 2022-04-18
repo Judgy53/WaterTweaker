@@ -14,6 +14,8 @@ Various graphics tweaks on Wetland Aspect water. Using console commands is recom
 
 # Changelog
 
+- 1.2.0
+    - Added Risk of Options integration.
 - 1.1.1
 	- Fix internal version number to avoid potential dependency issues.
 - 1.1.0

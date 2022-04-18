@@ -12,13 +12,14 @@ namespace WaterTweaker
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [R2APISubmoduleDependency(nameof(CommandHelper))]
-	
-	public class ExamplePlugin : BaseUnityPlugin
+    [BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
+
+    public class ExamplePlugin : BaseUnityPlugin
 	{
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Judgy";
         public const string PluginName = "WaterTweaker";
-        public const string PluginVersion = "1.1.1";
+        public const string PluginVersion = "1.2.0";
 
         private const string MapWetlandName = "foggyswamp";
 
@@ -28,7 +29,7 @@ namespace WaterTweaker
         private bool tryApplyTweaksAgain = false;
         private int applyAttempts = 0;
 
-        public void Awake()
+    public void Awake()
         {
             Log.Init(Logger);
 
@@ -38,6 +39,14 @@ namespace WaterTweaker
             ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "WetlandPostProcessing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
             ConfigWetlandWaterPP.SettingChanged += OnWaterSettingsChanged;
 
+            if (RiskOfOptionsCompat.enabled)
+            {
+                RiskOfOptionsCompat.AddOptionStepSlider(ConfigWetlandWaterOpacity, 0.0f, 1.0f, 0.1f, "Wetland Water Opacity");
+                RiskOfOptionsCompat.AddOptionCheckbox(ConfigWetlandWaterPP, "Wetland Post Processing");
+
+                RiskOfOptionsCompat.SetModDescription("Allows you to tweak the graphics settings of Wetland Aspect's water.");
+            }
+
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
@@ -45,7 +54,7 @@ namespace WaterTweaker
             Log.LogInfo(nameof(Awake) + " done.");
         }
 
-        public void Update()
+    public void Update()
         {
             if(tryApplyTweaksAgain)
             {
