@@ -22,17 +22,17 @@ namespace WaterTweaker
         }
         public static void AddOptionStepSlider(ConfigEntry<float> configEntry, float min, float max, float increment, string name)
         {
-            ModSettingsManager.AddOption(new StepSliderOption(configEntry, new StepSliderConfig() { min = min, max = max, increment = increment, name = name }));
+            ModSettingsManager.AddOption(new StepSliderOption(configEntry, new StepSliderConfig() { min = min, max = max, increment = increment, name = name }), WaterTweakerPlugin.PluginGUID, WaterTweakerPlugin.PluginName);
         }
 
         public static void AddOptionCheckbox(ConfigEntry<bool> configEntry, string name)
         {
-            ModSettingsManager.AddOption(new CheckBoxOption(configEntry, new CheckBoxConfig() { name = name }));
+            ModSettingsManager.AddOption(new CheckBoxOption(configEntry, new CheckBoxConfig() { name = name }), WaterTweakerPlugin.PluginGUID, WaterTweakerPlugin.PluginName);
         }
 
         public static void SetModDescription(string desc)
         {
-            ModSettingsManager.SetModDescription(desc);
+            ModSettingsManager.SetModDescription(desc, WaterTweakerPlugin.PluginGUID, WaterTweakerPlugin.PluginName);
         }
     }
-    }
+}
