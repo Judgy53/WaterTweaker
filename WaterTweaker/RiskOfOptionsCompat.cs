@@ -3,11 +3,13 @@ using RiskOfOptions.Options;
 using RiskOfOptions.OptionConfigs;
 using BepInEx.Configuration;
 
-public static class RiskOfOptionsCompat
+namespace WaterTweaker
+{
+    public static class RiskOfOptionsCompat
     {
         private static bool? _enabled;
 
-        public static bool enabled
+        public static bool Enabled
         {
             get
             {
@@ -32,4 +34,5 @@ public static class RiskOfOptionsCompat
         {
             ModSettingsManager.SetModDescription(desc);
         }
+    }
     }

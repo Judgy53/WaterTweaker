@@ -2,6 +2,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using R2API.Utils;
 using RoR2;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,8 +15,8 @@ namespace WaterTweaker
     [R2APISubmoduleDependency(nameof(CommandHelper))]
     [BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
 
-    public class ExamplePlugin : BaseUnityPlugin
-	{
+    public class WaterTweakerPlugin : BaseUnityPlugin
+    {
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Judgy";
         public const string PluginName = "WaterTweaker";
@@ -28,18 +29,18 @@ namespace WaterTweaker
 
         private bool tryApplyTweaksAgain = false;
         private int applyAttempts = 0;
-
-    public void Awake()
+        
+        public void Awake()
         {
             Log.Init(Logger);
-
-			ConfigWetlandWaterOpacity = Config.Bind<float>("WaterTweaker", "WetlandWaterOpacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
+            
+            ConfigWetlandWaterOpacity = Config.Bind("WaterTweaker", "WetlandWaterOpacity", 1.0f, "Sets the Opacity of the water in Wetland Aspect (between 0.0 and 1.0).");
             ConfigWetlandWaterOpacity.SettingChanged += OnWaterSettingsChanged;
 
-            ConfigWetlandWaterPP = Config.Bind<bool>("WaterTweaker", "WetlandPostProcessing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
+            ConfigWetlandWaterPP = Config.Bind("WaterTweaker", "WetlandPostProcessing", true, "Enables Post Processing effects when the camera goes underwater in Wetland Aspect.");
             ConfigWetlandWaterPP.SettingChanged += OnWaterSettingsChanged;
 
-            if (RiskOfOptionsCompat.enabled)
+            if (RiskOfOptionsCompat.Enabled)
             {
                 RiskOfOptionsCompat.AddOptionStepSlider(ConfigWetlandWaterOpacity, 0.0f, 1.0f, 0.1f, "Wetland Water Opacity");
                 RiskOfOptionsCompat.AddOptionCheckbox(ConfigWetlandWaterPP, "Wetland Post Processing");
@@ -54,7 +55,7 @@ namespace WaterTweaker
             Log.LogInfo(nameof(Awake) + " done.");
         }
 
-    public void Update()
+        public void Update()
         {
             if(tryApplyTweaksAgain)
             {
@@ -70,8 +71,8 @@ namespace WaterTweaker
 
         private bool TryApplyTweaksWetland()
         {
-            List<GameObject> waterGOList = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name.ToLower().StartsWith("water plane")).ToList();
-            Log.LogInfo($"Applying Wetland Water Tweaks to {waterGOList.Count} objects.");
+            IEnumerable<GameObject> waterGOList = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name.StartsWith("water plane", StringComparison.OrdinalIgnoreCase));
+            Log.LogInfo($"Applying Wetland Water Tweaks to {waterGOList.Count()} objects.");
 
             foreach(GameObject go in waterGOList)
             {
@@ -102,8 +103,8 @@ namespace WaterTweaker
         }
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
-		{
-			if(newScene.name.StartsWith(MapWetlandName))
+        {
+            if(newScene.name.StartsWith(MapWetlandName))
                 if(!TryApplyTweaksWetland())
                     tryApplyTweaksAgain = true;
         }
