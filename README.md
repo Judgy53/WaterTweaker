@@ -13,7 +13,10 @@ Various graphics tweaks on Wetland Aspect water. Default configuration doesn't d
 - `WetlandPostProcessing` : Enables Post Processing effects when the camera goes underwater in Wetland Aspect. (Default: `true`)
 
 # Changelog
-
+- 1.3.0
+	- Fix water object finder (was broken after Devotion update)
+	- Reduce lag when something goes wrong when modifying the water properties.
+	- Commands are now registered with reflection. R2API is no longer an optional dependency.
 - 1.2.0
     - Added Risk of Options integration.
     - R2API is now an optional dependency.
