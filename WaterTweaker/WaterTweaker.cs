@@ -18,7 +18,7 @@ namespace WaterTweaker
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Judgy";
         public const string PluginName = "WaterTweaker";
-        public const string PluginVersion = "1.2.0";
+        public const string PluginVersion = "1.3.0";
 
         private const string MapWetlandName = "foggyswamp";
 
