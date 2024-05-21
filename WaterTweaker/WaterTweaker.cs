@@ -2,6 +2,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using RoR2;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,7 +25,8 @@ namespace WaterTweaker
         public static ConfigEntry<float> ConfigWetlandWaterOpacity { get; set; }
         public static ConfigEntry<bool> ConfigWetlandWaterPP { get; set; }
 
-        private bool tryApplyTweaksAgain = false;
+        private bool tryApplyTweaks = false;
+        private bool loopRunning = false;
         private int applyAttempts = 0;
         
         public void Awake()
@@ -52,27 +54,37 @@ namespace WaterTweaker
 
         public void Update()
         {
-            if(tryApplyTweaksAgain)
-            {
-                if (TryApplyTweaksWetland() || applyAttempts >= 60)
-                {
-                    tryApplyTweaksAgain = false;
-                    applyAttempts = 0;
-                }
-                else
-                    applyAttempts++;
-            }
+            if(tryApplyTweaks && loopRunning == false)
+                StartCoroutine("ApplyTweaksCoroutine");
 
             /*
             if (Input.GetKeyDown(KeyCode.F2) && Run.instance != null)
                 DEBUG_GoToWetlandMap();
-            */
+            //*/
+        }
+
+        private IEnumerator ApplyTweaksCoroutine()
+        {
+            loopRunning = true;
+            tryApplyTweaks = false;
+
+            while (applyAttempts < 10)
+            {
+                if (TryApplyTweaksWetland())
+                    break;
+
+                applyAttempts++;
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            applyAttempts = 0;
+            loopRunning = false;
         }
 
         private bool TryApplyTweaksWetland()
         {
-            IEnumerable<GameObject> waterGOList = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name.StartsWith("water plane", StringComparison.OrdinalIgnoreCase));
-            Log.LogInfo($"Applying Wetland Water Tweaks to {waterGOList.Count()} objects.");
+            IEnumerable<GameObject> waterGOList = Resources.FindObjectsOfTypeAll<GameObject>().Where(IsWaterPlaneObject);
+            Log.LogInfo($"Trying to apply Wetland Water Tweaks to {waterGOList.Count()} objects.");
 
             foreach(GameObject go in waterGOList)
             {
@@ -95,18 +107,24 @@ namespace WaterTweaker
             return true;
         }
 
-        private void OnWaterSettingsChanged(object sender, System.EventArgs e)
+        private static bool IsWaterPlaneObject(GameObject go)
+        {
+            //Log.LogDebug(go == null ? "GO_NULL" : (go.name + ' ' + (go.scene == null ? "SC_NULL" : (go.scene.name ?? "SCNAME_NULL"))));
+            if (go == null || go.scene == null || go.scene.name == null || go.name == null) return false;
+
+            return go.scene.name.StartsWith(MapWetlandName) && go.name.StartsWith("water plane", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void OnWaterSettingsChanged(object sender, EventArgs e)
         {
             if(SceneManager.GetActiveScene().name.StartsWith(MapWetlandName))
-                if (!TryApplyTweaksWetland())
-                    tryApplyTweaksAgain = true;
+                tryApplyTweaks = true;
         }
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
             if(newScene.name.StartsWith(MapWetlandName))
-                if(!TryApplyTweaksWetland())
-                    tryApplyTweaksAgain = true;
+                tryApplyTweaks = true;
         }
 
         //Copypasted and modified from DebugToolkit's `next_stage` command
